@@ -1,0 +1,30 @@
+{% extends 'base_template.html' %}
+{% block title %}
+Analysis
+{% endblock %}
+
+{% block content %}
+
+<div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-dark" style="color:white">  
+    </iframe>
+    <div class="col-md-5 p-lg-5 mx-auto my-5">
+        <h1 class="display-4 font-weight-normal">Service Level Agreement</h1>
+        <p class="lead font-weight-normal">Product analysis</p>
+        <h2 class="lead font-weight-normal">Claimed brand : {{ item.name }}</h2>
+        <h2 class="lead font-weight-normal">Claimed product price : {{ item.price }}</h2>
+        <h2 class="lead font-weight-normal">Flask Market price : {{ item.real_price }}</h2>
+        <form method="POST" class="form-signin" style="color:white">
+            {{ form2.hidden_tag() }}
+            {{ form2.submit(class="btn btn-lg btn-block btn-success") }}
+        </form>
+        <form method="POST" class="form-signin" style="color:white">
+            {{ form3.hidden_tag() }}
+            {{ form3.submit(class="btn btn-lg btn-block btn-danger") }}
+        </form>
+    </div>
+    <div class="product-device box-shadow d-none d-md-block"></div>
+    <div class="product-device product-device-2 box-shadow d-none d-md-block"></div>
+    <!-- <iframe src='https://my.spline.design/untitled-173c0d74059d1a3bdb15dc41388c264c/' frameborder='0' width='100%' height='100%'></iframe> -->
+</div>
+
+{% endblock %}

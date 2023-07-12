@@ -1,0 +1,38 @@
+1) open terminal in your computer
+2) enter "set FLASK_APP=(flask file name).py
+3) enter "set FLASK_DEBUG=1" to turn on debugging
+4) enter "flask run"
+5) copy the url and paste it in any browser's search bar
+
+or
+
+1) open terminal on computer or vscode terminal
+2) run the python file which combines all other file components of our project (python (filename)) 
+
+________________________________________________________________________________________________________________________________________
+
+Safety notes-1:
+
+from enum import unique
+from flask import Flask, render_template
+from flask_sqlalchemy import SQLAlchemy
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///market.db'
+db = SQLAlchemy(app)
+class Item(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(length=30), nullable=False, unique=True)
+    price = db.Column(db.Integer(), nullable=False, unique=True)
+    barcode = db.Column(db.String(length=4), nullable=False, unique=True)
+    description = db.Column(db.String(length=1300), nullable=False, unique=True)
+    def __repr__(self):
+        return f'Item {self.name} - /Rs {self.price}'
+@app.route("/")   #decorator
+def home_page():
+    return render_template("home.html")
+items = Item.query.all()    #details in notes lines (90 - 150) 
+@app.route("/market")
+def market_page():
+    return render_template("market.html",items=items)
+
+_________________________________________________________________________________________________________________________________

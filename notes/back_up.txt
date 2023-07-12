@@ -1,0 +1,12 @@
+{{form.hidden_tag()}}
+        <!--a way to protect our database from hackers who perform CSRF(Cross Site Request Forgery) to access database unauthorized while client server interaction -->
+        <h3><b>{{form.name.label()}}:</b></h3>
+        {{form.name(class="form-control", placeholder="Name")}}
+
+        <h3><b>{{form.description.label()}}:</b></h3>
+        {{form.description(class="form-control", placeholder="Description")}}
+
+        <h3><b>{{form.price.label()}}:</b></h3>
+        {{form.price(class="form-control", placeholder="Price")}}
+        <br>
+        {{form.submit(class="btn btn-primary btn-lg btn-block")}}

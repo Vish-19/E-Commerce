@@ -1,0 +1,55 @@
+{% extends 'base_template.html' %}
+{% block title %}
+Cart 
+{% endblock %}
+
+{% block content %}
+{% if items.first() and items!=[] %}
+<table class="table table-hover table-dark">
+    <h1>Here we go</h1><br><br>
+    <thead>
+        <tr>
+            <!-- Your Columns HERE -->
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Barcode</th>
+            <th scope="col">Price</th>
+            <th scope="col">Description</th>
+            <th scope="col">Options</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Your rows inside the table HERE: -->
+        {% for item in items %}
+            {% include 'includes/items_modals.html' %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.barcode }}</td>
+                <td>${{ item.price }}</td>
+                <td>{{item.description}}</td>
+                <td>
+                    <form method="post">
+                        {{ cart_form.hidden_tag() }}
+                        <input id="cart_form" name="cart_form" type="hidden" value="{{item.name}}">
+                        {{ cart_form.submit(class="btn btn-outline btn-danger") }}
+                      </form>
+                      <br>
+                      <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#Modal-MoreInfo">Buy</button>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+<div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-dark" style="color:white">
+    <div class="col-md-5 p-lg-5 mx-auto my-5">
+        <h1 class="display-4 font-weight-normal">No items added to the cart</h1>
+        <p class="lead font-weight-normal">Start purchasing products by clicking the link below</p>
+        <a class="btn btn-primary" href="{{ url_for('market_page') }}">Shop</a>
+    </div>
+    <div class="product-device box-shadow d-none d-md-block"></div>
+    <div class="product-device product-device-2 box-shadow d-none d-md-block"></div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base_template.html' %}
+{% block title %}
+Register
+{% endblock %}
+
+{% block content %}
+<br><br><br><br>
+<div class="container" style="font-family: monospace">
+    <center><h1>Please create your account</h1></center><br><br>
+    <form method="post" class="form-register" style="color : white">
+        {{form.hidden_tag()}}
+        <!--a way to protect our database from hackers who perform CSRF(Cross Site Request Forgery) to access database unauthorized while client server interaction -->
+        <h3><b>{{form.username.label()}}:</b></h3>
+        {{form.username(class="form-control", placeholder="User Name")}}
+
+        <h3><b>{{form.email_address.label()}}:</b></h3>
+        {{form.email_address(class="form-control", placeholder="Email address")}}
+
+        <h3><b>{{form.password1.label()}}:</b></h3>
+        {{form.password1(class="form-control", placeholder="Enter password")}}
+
+        <h3><b>{{form.password2.label()}}:</b></h3>
+        {{form.password2(class="form-control", placeholder="Confirm password")}}
+        <br>
+        <div class="checkbox mb-3 text-center">
+            <h6>Already have an account?</h6>
+            <a class="btn btn-sm btn-secondary" href="{{ url_for('login_page') }}">Login</a>
+         </div>
+        {{form.submit(class="btn btn-primary btn-lg btn-block")}}
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,235 @@
+db link : postgresql://rtuncknfyhurym:fc8c21ae86a904dfe86f4025c8a8203cdda7b7f8c58cd9300bfeafe6942d16ed@ec2-44-199-22-207.compute-1.amazonaws.com:5432/d6rrssvqgqge3u
+
+
+->
+(2 routes can have the same function)
+@app.route("/home")
+@app.route("/")   #decorator
+def hello_world():
+    return render_template("first.html") #remember **the html file given as input should always be put in a folder named templates in your project folder**
+____________________________________________________________________________________________________________________________________________________________________
+
+->
+(creating an about page, can be accessed by adding /app route to the url)
+@app.route("/about")
+def about():
+    return "<h1>About Page</h1>"
+_____________________________________________________________________________________________________________________________________________
+
+
+->
+@app.route('/<username>') (creates a path to a page where the user variable is used)
+def hello(username):
+    return f'<h1> Hello {username}</h1>'   (formatted string to use the user name)
+__________________________________________________________________________________________________________________________________________
+
+
+->
+@app.route("/first") (render templates are used to render html pages into the function)
+def html():
+    return render_template('first.html')
+___________________________________________________________________________________________________________________________________________________________
+
+->
+VALUES FROM PYTHON FILE TO THE html PAGE:
+
+SINGLE VALUE:
+@app.route("/market")
+def market_page():
+    return render_template("market.html",item_name="phone") (this value can used later in the html page)
+(ACCESSING IN THE html PAGE <p>{{item_name}}<\p>)
+
+LIST OF VALUES:
+items = [{'id':1,'name':'phone','bar-code':'123','price':12330},
+{'id':2,'name':'laptop','bar-code':'456','price':54360},
+{'id0':3,'name':'tab','bar-code':'789','price':36270}] 
+@app.route("/market")
+def market_page():
+    return render_template("market.html",items=items)
+
+ACCESSING IN html PAGE:
+            {% for item in items %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.barcode }}</td>
+                    <td>{{ item.price }}$</td>
+                </tr>
+            {% endfor %}
+______________________________________________________________________________________________________________________________________________________
+
+
+-> 
+Using jinga to have a base template to helpreduce the size of code, here we basically use a base html template
+and we extend those code into all the pages we require that template in:
+base.html:
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>
+        {% block title %}
+                                                        //THIS AREA IS USED TO GIVE THE TITLE AS PER GIVEN IN THOSE PARTICULAR HTML PAGES
+        {% endblock %}
+    </title>
+  </head>
+  <body>
+      {% block content %}
+                                                        //THIS SPECIFIES THE CONTENT SPECIFIC TO THE HTML PAGES WHICH EXTEND THIS BASE HTML FILE
+      {% endblock %}
+                                                        //ANY CONTENT IN THIS AREA WILL COMMON FOR ALL THE PAGES WHICH EXTEND THE BASE HTML FILE
+  </body>
+</html>
+
+sample.html:
+{% extends 'base_template.html' %} EXTENDING THE BASE HTML CONTENT
+{% block title %}
+Home Page   TITLE SPECIFIC TO THAT PARTICULAR PAGE
+{% endblock %}
+
+{% block content %}
+<h1>Hello there</h1>   CONTENT PARTICULAR TO THE GIVEN HTML PAGE
+{% endblock %}
+__________________________________________________________________________________________________________________________________________
+
+ACCESSING DATABASES:
+set up:
+go to the terminal and execute: (pip install flask-sqlalchemy)
+
+python code required in the flask file:
+
+from flask_sqlalchemy import SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///market.db'                       #used to set up sqlite and inform flask app
+db = SQLAlchemy(app)                                                                #creating a database instance
+class Item(db.Model):                                                               #class Item which stores the items in the database
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(length=30), nullable=False, unique=True)
+    price = db.Column(db.Integer(), nullable=False, unique=True)                    #(All items of the database)
+    barcode = db.Column(db.String(length=4), nullable=False, unique=True)
+    description = db.Column(db.String(length=1300), nullable=False, unique=True)
+    def __repr__(self):                                                             #the repr function is used for representing the database items for each object created
+        return f'Item {self.name} - /Rs {self.price}'
+
+TERMINAL:
+Step 1: Initiating python in terminal
+C:\Users\Jayaprakash\OneDrive\Desktop\vscode\flask> python
+
+Step 2: creating a database
+from first import db
+db.create_all() - creates the tables(unlesss created no tables can be accessed)
+
+Step 3: Inserting Items
+from first import Item
+item1 = Item(name='phone', price=20000, barcode = '123', description='Phone in very good condition, easy to use')
+db.session.add(item1)
+item2 = Item(name='laptop', price=40000, barcode = '456', description='Laptop in very good condition, easy to use')
+db.session.add(item1)
+db.session.commit()
+
+Step 4: representing
+Item.query.all()
+
+Ouput without repr function:
+[<Item 1>, <Item 2>]
+Ouput with the specified repr function in Item class:
+[Item phone - /Rs 20000, Item laptop - /Rs 40000]
+
+Step 5:
+exit()
+
+Other operations:
+accesing all items:
+>>> for i in Item.query.all():
+...   i.name                                 
+...   i.price
+...   i.barcode                         (ALWAYS REMEMBER TO GIVE 2 SPACES BEFORE ENTERING THE ITEMS, ELSE IT WILL LEAD TO AN ERROR)
+...   i.description
+
+flitering:
+>>> Item.query.filter_by(price = 20000)
+<flask_sqlalchemy.BaseQuery object at 0x000002121842E4D0>
+
+>>> for item in Item.query.filter_by(price = 20000):
+...   item.name
+
+drop all databases:
+db.drop_all() - deletes all databases
+
+cancel all commits:
+db.session.rollback()
+
+
+adding foreign key:
+in foreign key class:
+(attribute which is the foreign key) = db.relationship('(class which references the foreign key)', backref='(Foreign key name)', lazy=True)
+in referencing class:
+(attribute which references the attribute) = db.Column(db.(the datatype of the foreign key attribute in the other class)(), db.ForeignKey('(foreign key class).(attribute which is the foreign key)'))
+example:
+in User class:
+items = db.relationship('Item', backref='owned_user', lazy=True)
+in Item class:
+owner = db.Column(db.Integer(), db.ForeignKey('user.id'))
+
+in the terminal:
+item1 = Item.query.filter_by(name='phone')
+item1.owner=User.query.filter_by(username='abc').first().id
+db.session.add(item1)
+db.session.commit()
+i = Item.query.filter_by(name='phone').first()
+i.owner
+output:
+1
+i.owned_user
+output:
+<User 1>_
+
+_______________________________________________________________________________________________________________________________________________________________
+
+forms:
+requirements:
+pip install flask-wtf
+pip install wtforms
+
+steps:
+1) import all fields required from wtforms like(StringField, PasswordField, Submitfield...etc)
+2) create a class which will contain all our variables and their labels
+3) then we move move the form to the required html file via the usage of routes python file or watever file that contains all routes
+4) now we can acces it in the html file as it is passed to it by routes.py
+
+eg:
+forms.py:
+
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, EmailField, SubmitField
+class ResgistrationForm(FlaskForm):
+    username = StringField(label='User Name')
+    email_address = EmailField(label='Email Address')
+    password1 = PasswordField(label='Password')
+    password2 = PasswordField(label='Confirm Password') 
+    submit = SubmitField(label='Submit')
+
+routes.py:
+
+@app.route('/register')
+def register_page():
+    form = ResgistrationForm()
+    return render_template('register.html',form=form)
+
+in register.html:
+
+<h3><b>{{form.username.label()}}:</b></h3>
+{{form.username(class="form-control", placeholder="User Name")}}
+
+<h3><b>{{form.email_address.label()}}:</b></h3>
+{{form.email_address(class="form-control", placeholder="Email address")}}
+
+<h3><b>{{form.password1.label()}}:</b></h3>
+{{form.password1(class="form-control", placeholder="Enter password")}}
+
+<h3><b>{{form.password2.label()}}:</b></h3>
+{{form.password2(class="form-control", placeholder="Confirm password")}}
+<br>
+
+{{form.submit(class="btn btn-primary btn-lg btn-block")}}
+
+
+

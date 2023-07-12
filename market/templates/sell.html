@@ -1,0 +1,24 @@
+{% extends 'base_template.html' %}
+{% block title %}
+Sell Page
+{% endblock %}
+{% block content %}
+<br><br><br><br>
+<div class="container" style="font-family: monospace">
+    <center><h1>Please provide the item details</h1></center><br><br>
+    <form method="post" class="form-register" style="color : white">
+        {{form.hidden_tag()}}
+        <!--a way to protect our database from hackers who perform CSRF(Cross Site Request Forgery) to access database unauthorized while client server interaction -->
+        <h3><b>{{form.name.label()}}:</b></h3>
+        {{form.name(class="form-control", placeholder="Name")}}
+
+        <h3><b>{{form.description.label()}}:</b></h3>
+        {{form.description(class="form-control", placeholder="Description")}}
+
+        <h3><b>{{form.price.label()}}:</b></h3>
+        {{form.price(class="form-control", placeholder="Price")}}
+        <br>
+        {{form.submit(class="btn btn-primary btn-lg btn-block")}}
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,4 @@
+1) learn all abt __init__ and packages in python cuz u sck at it
+2) u don understand why the fck ur code working after restructuring ur code so better go thru it again
+3) Learn abt @ in python cuz that guy never explained it clearly.
+4) Prbably consider oops in python as u have no idea abt it lol.
